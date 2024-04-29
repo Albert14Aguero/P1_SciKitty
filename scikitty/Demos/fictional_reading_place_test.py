@@ -35,14 +35,14 @@ preds =  trained_tree.predict(X_test)
 
 trained_tree.print_tree()
 dot = trained_tree.visualize_tree()
-dot.render("tree", format="pdf", cleanup=True)
+dot.render("fictional_reading_place", format="pdf", cleanup=True)
 #plt.figure(figsize=(10, 6))                                                                             #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
 #plot_tree(trained_tree, feature_names=X_train.columns, class_names=['No', 'Yes'], filled=True)           #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
 #plt.show()                                                                                               #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
 
 
 
-cls_sklearn = DecisionTreeClassifier(criterion='entropy')                                               #Tarea 10) Opcional: se muestra en cada caso el árbol que saldría usando las librerías de sckitlearn
+cls_sklearn = DecisionTreeClassifier(criterion='gini')                                               #Tarea 10) Opcional: se muestra en cada caso el árbol que saldría usando las librerías de sckitlearn
 
 cls_sklearn.fit(X_train, y_train)                                                                       #Tarea 10) Opcional: se muestra en cada caso el árbol que saldría usando las librerías de sckitlearn
 

@@ -40,5 +40,5 @@ joblib.dump(cls, '../persist/fictional_reading_place.pkl')                      
 
 
 dot = cls.visualize_tree()                                   #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
-dot.render("../view/tree", format="pdf", cleanup=True)
-print("Graph generated as tree.pdf")
+dot.render("../view/fictional_reading_place", format="pdf", cleanup=True)
+print("Graph generated as fictional_reading_place.pdf")

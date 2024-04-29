@@ -80,7 +80,7 @@ class DecisionTree:
         unique_feature, counts_feature = np.unique(feature, return_counts=True)
 
         # Verificar si solo hay un tipo de número en feature
-        if np.all(counts_feature == total_elementos):
+        if np.all(counts_feature == total_elementos) or len(unique_target) == 1:
             # Si solo hay un tipo de número, las probabilidades condicionales son uniformes
             probabilidades_condicionales = np.ones((len(unique_feature), len(unique_target))) / len(unique_target)
             return probabilidades_condicionales
