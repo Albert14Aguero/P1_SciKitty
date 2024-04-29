@@ -3,9 +3,9 @@ import pandas as pd
 import joblib
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from scikitty.models.LogisticRegression import LogisticRegression
+from ..models.LogisticRegression import LogisticRegression
 
-df = pd.read_csv("scikitty/datasets/playTennis.csv")   #Tarea 3): Se carga el dataset en la forma usual a X,y
+df = pd.read_csv("../datasets/playTennis.csv")   #Tarea 3): Se carga el dataset en la forma usual a X,y
 
 df_encoded = pd.get_dummies(df, columns=['Outlook', 'Temperature', 'Humidity', 'Wind'],dtype = "int") #Tarea 3): Se carga el dataset en la forma usual a X,y
 
@@ -25,7 +25,7 @@ preds =  cls.predict(X_test)  #Tarea 6) : Se evalúa el árbol (valida usando X_
 
 print(preds)
 
-joblib.dump(cls, 'scikitty/persist/playTennis.pkl')                                 #Tarea 7): Se salva (exporta, serializa) el modelo.
+joblib.dump(cls, '../persist/playTennis.pkl')                                 #Tarea 7): Se salva (exporta, serializa) el modelo.
 
 #plt.figure(figsize=(10, 6))                                                                             #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
 #plot_tree(trained_tree, feature_names=X_train.columns, class_names=['No', 'Yes'], filled=True)           #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
