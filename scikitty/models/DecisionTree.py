@@ -27,7 +27,7 @@ class DecisionTree:
     
     def build_tree(self, X, Y, depth=0):
         num_samples, num_features = np.shape(X)
-        if num_samples >= self.min_samples and depth <= self.max_depth:
+        if num_samples >= self.min_samples and depth <= self.max_depth and num_features > 0:
             
             best_split = self.best_split(X, Y)
             
@@ -55,7 +55,7 @@ class DecisionTree:
             if new_impurity < impurity:
                 impurity = new_impurity
                 best_x = x
-        
+        print("Mejor: ", best_x)
         best_split["feature_index"] = best_x.name
         best_split["impurity"] = impurity
         best_split["impurity_type"] = "Gini" if self.gini else "Entropy"
