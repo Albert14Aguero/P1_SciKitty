@@ -145,7 +145,7 @@ class DecisionTree:
                 label=f"{node.left.feature_index}\n{node.left.impurity}\n{node.left.impurity_type}\n{node.samples}\n"
             label +=f"{node.left.value.value_counts().reindex([0, 1], fill_value=0).tolist()}"
             dot.node(name=str(id(node.left)), label=label)
-            dot.edge(str(id(node)), str(id(node.left)), label="Left")
+            dot.edge(str(id(node)), str(id(node.left)), label="0")
             self.visualize_tree(node.left, dot)
         
         if node.right is not None:
@@ -154,7 +154,7 @@ class DecisionTree:
                 label=f"{node.right.feature_index}\n{node.right.impurity}\n{node.right.impurity_type}\n{node.samples}\n"  
             label +=f"{node.right.value.value_counts().reindex([0, 1], fill_value=0).tolist()}"
             dot.node(name=str(id(node.right)), label=label)
-            dot.edge(str(id(node)), str(id(node.right)), label="Right")
+            dot.edge(str(id(node)), str(id(node.right)), label="1")
             self.visualize_tree(node.right, dot)
         
         return dot
