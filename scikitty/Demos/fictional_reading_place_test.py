@@ -16,15 +16,10 @@ df['user_action'] = df['user_action'].replace({'skips':0, 'reads': 1})
 df['author'] = df['author'].replace({'unknown':0, 'known': 1})
 df['thread'] = df['thread'].replace({'new':0, 'follow_up': 1})
 df['length'] = df['length'].replace({'long':0, 'short': 1})
+df['where_read'] = df['where_read'].replace({'home':0, 'work': 1}) 
 
-df_encoded = pd.get_dummies(df, columns=['user_action', 'author', 'thread', 'length'],drop_first=True,dtype = "int")
-
-
-df_encoded['where_read'] = df_encoded['where_read'].map({'home': 0, 'work': 1}) 
-
-
-X = df_encoded.drop('where_read', axis=1).drop('example', axis=1) 
-y = df_encoded['where_read']               
+X = df.drop('user_action', axis=1).drop('example', axis=1) 
+y = df['user_action']               
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)      
 
