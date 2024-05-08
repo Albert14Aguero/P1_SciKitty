@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 import joblib
 import matplotlib.pyplot as plt
-from DecisionTree import DecisionTree
+from models.DecisionTree import DecisionTree
 
 #Tarea 9) Se repiten los pasos anteriores 6 y 8 usando el modelo salvado y se obtienen los mismos resultados.
 
