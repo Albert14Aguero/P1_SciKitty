@@ -153,7 +153,8 @@ class DecisionTree:
             self.print_tree(node.right, "-" + indent)
             self.print_tree(node.left, "-" + indent)
     
-    def visualize_tree(self, node=None, dot=None):
+    def visualize_tree(self, node=None, dot=None, features_dictionary = None):
+        
         if not node:
             node = self.root
         if dot is None:
@@ -166,8 +167,9 @@ class DecisionTree:
                 label = f"{node.left.feature_index}\n{node.impurity_type} = {node.left.y_impurity}\nSamples = {node.left.samples}\n"
             label += f"Values = {node.left.value.value_counts().reindex([0, 1], fill_value=0).tolist()}"
             dot.node(name=str(id(node.left)), label=label)
-            dot.edge(str(id(node)), str(id(node.left)), label="0")
-            self.visualize_tree(node.left, dot)
+            right_label = "0" if features_dictionary == None else features_dictionary[node.feature_index][0]
+            dot.edge(str(id(node)), str(id(node.left)), label=right_label)
+            self.visualize_tree(node.left, dot, features_dictionary)
         
         if node.right is not None:
             label = ""
@@ -175,8 +177,9 @@ class DecisionTree:
                 label = f"{node.right.feature_index}\n{node.impurity_type} = {node.right.y_impurity}\nSamples = {node.right.samples}\n"
             label += f"Values = {node.right.value.value_counts().reindex([0, 1], fill_value=0).tolist()}"
             dot.node(name=str(id(node.right)), label=label)
-            dot.edge(str(id(node)), str(id(node.right)), label="1")
-            self.visualize_tree(node.right, dot)
+            left_label = "1" if features_dictionary == None else features_dictionary[node.feature_index][1]
+            dot.edge(str(id(node)), str(id(node.right)), label=left_label)
+            self.visualize_tree(node.right, dot, features_dictionary)
         
         return dot
         

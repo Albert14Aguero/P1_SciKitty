@@ -10,7 +10,11 @@ from metrics import Accuracy, F1, Recall, FPR, Precision, Confusion_matrix
 
 df = pd.read_csv("../datasets/fictional_disease.csv")   
 
-
+features_dictionary = {}
+for column in df.columns:
+    unique_categories = df[column].unique()
+    features_dictionary[column] = list(unique_categories)
+features_dictionary['Age'] = ['Younger', 'Older']
 
 meanAge = df['Age'].mean() #Obtenemos el priomedio de la edad
 binary_values = (df['Age'] <= meanAge) #Obtenemos un arreglo de booleanos que nos dice si la edad es menor o igual al promedio
@@ -51,7 +55,7 @@ print("FPR =", fpr)                                                     #Tarea 6
 
 
 
-dot = trained_tree.visualize_tree()                                   #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
+dot = trained_tree.visualize_tree(features_dictionary=features_dictionary)                                   #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
 dot.render("../view/ficitional_disease_tree", format="pdf", cleanup=True)
 print("Graph generated as play_tennis_tree.pdf")
 

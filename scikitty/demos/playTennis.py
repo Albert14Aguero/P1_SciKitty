@@ -9,8 +9,14 @@ from models.DecisionTree import DecisionTree
 from metrics import Accuracy, F1, Recall, FPR, Precision, Confusion_matrix
 
 df = pd.read_csv("../datasets/playTennis.csv")   #Tarea 3): Se carga el dataset en la forma usual a X,y
-
 df_encoded = pd.get_dummies(df, columns=['Outlook', 'Temperature', 'Humidity', 'Wind'],dtype = "int") #Tarea 3): Se carga el dataset en la forma usual a X,y
+
+features_dictionary = {}
+for column in df_encoded.columns:
+    unique_categories = df_encoded[column].unique()
+    numbers = sorted(list(unique_categories))
+    features_dictionary[column] =  numbers if  numbers != [0,1] else [{0: "No", 1: "Yes"}[i] for i in numbers]
+
 
 df_encoded['Play Tennis'] = df_encoded['Play Tennis'].map({'No': 0, 'Yes': 1})  #Tarea 3): Se carga el dataset en la forma usual a X,y
 
@@ -47,6 +53,6 @@ print("FPR =", fpr)                                                     #Tarea 6
 
 joblib.dump(cls, '../persist/play_tennis.pkl')                                 #Tarea 7): Se salva (exporta, serializa) el modelo.
 
-dot = cls.visualize_tree()                                               #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
-dot.render("../view/play_tennis_tree", format="pdf", cleanup=True)
+dot = cls.visualize_tree(features_dictionary=features_dictionary)                                               #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
+dot.render("../view/play_tennis", format="pdf", cleanup=True)
 print("Graph generated as play_tennis_tree.pdf")

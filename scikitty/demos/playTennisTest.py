@@ -14,6 +14,12 @@ df_encoded = pd.get_dummies(df, columns=['Outlook', 'Temperature', 'Humidity', '
 
 df_encoded['Play Tennis'] = df_encoded['Play Tennis'].map({'No': 0, 'Yes': 1})  #Tarea 3): Se carga el dataset en la forma usual a X,y
 
+features_dictionary = {}
+for column in df_encoded.columns:
+    unique_categories = df_encoded[column].unique()
+    numbers = sorted(list(unique_categories))
+    features_dictionary[column] =  numbers if  numbers != [0,1] else [{0: "No", 1: "Yes"}[i] for i in numbers]
+
 X = df_encoded.drop('Play Tennis', axis=1)  #Tarea 3): Se carga el dataset en la forma usual a X,y
 y = df_encoded['Play Tennis']               #Tarea 3): Se carga el dataset en la forma usual a X,y
 
@@ -43,7 +49,7 @@ print("FPR =", fpr)                                                     #Tarea 6
 
 
 
-dot = trained_tree.visualize_tree()                                   #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
+dot = trained_tree.visualize_tree(features_dictionary=features_dictionary)                                   #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
 dot.render("../view/play_tennis_tree", format="pdf", cleanup=True)
 print("Graph generated as play_tennis_tree.pdf")
 

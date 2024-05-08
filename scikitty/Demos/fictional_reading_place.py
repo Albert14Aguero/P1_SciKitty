@@ -9,6 +9,13 @@ from DecisionTree import DecisionTree
 
 df = pd.read_csv("../datasets/fictional_reading_place.csv")   #Tarea 3): Se carga el dataset en la forma usual a X,y
 
+features_dictionary = {}
+for column in df.columns:
+    unique_categories = df[column].unique()
+    features_dictionary[column] = list(unique_categories)
+
+
+
 df['user_action'] = df['user_action'].replace({'skips':0, 'reads': 1})
 df['author'] = df['author'].replace({'known':0, 'unknown': 1})
 df['thread'] = df['thread'].replace({'new':0, 'follow_up': 1})
@@ -28,6 +35,7 @@ cls.fit(X_train, y_train)    #Tarea 5): Se entrena con X_train (método fit) el 
 cls.print_tree()
 
 
+
 preds =  cls.predict(X_test)  
 print(preds)
 print(y_test)       
@@ -37,6 +45,6 @@ print(y_test)
 joblib.dump(cls, '../persist/fictional_reading_place.pkl')                                 #Tarea 7): Se salva (exporta, serializa) el modelo.
 
 
-dot = cls.visualize_tree()                                   #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
+dot = cls.visualize_tree(features_dictionary=features_dictionary)                                   #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
 dot.render("../view/fictional_reading_place", format="pdf", cleanup=True)
 print("Graph generated as fictional_reading_place.pdf")

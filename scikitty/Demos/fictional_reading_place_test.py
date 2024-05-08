@@ -12,6 +12,12 @@ from DecisionTree import DecisionTree
 
 df = pd.read_csv("../datasets/fictional_reading_place.csv")   
 
+
+features_dictionary = {}
+for column in df.columns:
+    unique_categories = df[column].unique()
+    features_dictionary[column] = list(unique_categories)
+
 df['user_action'] = df['user_action'].replace({'skips':0, 'reads': 1})
 df['author'] = df['author'].replace({'known':0, 'unknown': 1})
 df['thread'] = df['thread'].replace({'new':0, 'follow_up': 1})
@@ -28,8 +34,8 @@ trained_tree = joblib.load('../persist/fictional_reading_place.pkl')
 preds =  trained_tree.predict(X_test)
 
 trained_tree.print_tree()
-dot = trained_tree.visualize_tree()
-dot.render("fictional_reading_place", format="pdf", cleanup=True)
+dot = trained_tree.visualize_tree(features_dictionary=features_dictionary)
+dot.render("../view/fictional_reading_place_tree", format="pdf", cleanup=True)
 #plt.figure(figsize=(10, 6))                                                                             #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
 #plot_tree(trained_tree, feature_names=X_train.columns, class_names=['No', 'Yes'], filled=True)           #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
 #plt.show()                                                                                               #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
