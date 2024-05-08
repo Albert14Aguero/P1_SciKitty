@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from metrics import Accuracy, F1, Recall, FPR, Precision, Confusion_matrix
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
 df = pd.read_csv("../datasets/fictional_disease.csv")   
 
@@ -50,6 +51,19 @@ print("Confusion Matrix =\n", conf_matrix)                                      
 print("FPR =", fpr)                                                     #Tarea 6) : Se evalúa el árbol (valida usando X_test, y_test) mostrando exactitud, precisión, recall, F1. En los casos de target binario se muestra la matriz de confusión.
 
 
+accuracy_sklearn = accuracy_score(y_test, predictions)
+precision_sklearn = precision_score(y_test, predictions)
+recall_sklearn = recall_score(y_test, predictions)
+f1_sklearn = f1_score(y_test, predictions)
+conf_matrix_sklearn = confusion_matrix(y_test, predictions)
+
+# Imprimir las métricas de sklearn
+print("\n\nSklearn Metrics:")
+print("Accuracy =", accuracy_sklearn)
+print("Precision =", precision_sklearn)
+print("Recall =", recall_sklearn)
+print("F1 =", f1_sklearn)
+print("Confusion Matrix =\n", conf_matrix_sklearn)
 
 dot = trained_tree.visualize_tree()                                   #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
 dot.render("../view/ficitional_disease_tree", format="pdf", cleanup=True)

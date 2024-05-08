@@ -7,17 +7,21 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from metrics import Accuracy, F1, Recall, FPR, Precision, Confusion_matrix
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
 df = pd.read_csv("../datasets/playTennis.csv")   #Tarea 3): Se carga el dataset en la forma usual a X,y
 
-df_encoded = pd.get_dummies(df, columns=['Outlook', 'Temperature', 'Humidity', 'Wind'],dtype = "int") #Tarea 3): Se carga el dataset en la forma usual a X,y
+df_encoded = pd.get_dummies(df, columns=['Outlook', 'Temperature'],dtype = "int") #Tarea 3): Se carga el dataset en la forma usual a X,y
 
+df_encoded['Humidity'] = df_encoded['Humidity'].map({'Normal': 0, 'High': 1})  #Tarea 3): Se carga el dataset en la forma usual a X,y
+df_encoded['Wind'] = df_encoded['Wind'].map({'Weak': 0, 'Strong': 1})  #Tarea 3): Se carga el dataset en la forma usual a X,y
 df_encoded['Play Tennis'] = df_encoded['Play Tennis'].map({'No': 0, 'Yes': 1})  #Tarea 3): Se carga el dataset en la forma usual a X,y
 
 X = df_encoded.drop('Play Tennis', axis=1)  #Tarea 3): Se carga el dataset en la forma usual a X,y
 y = df_encoded['Play Tennis']               #Tarea 3): Se carga el dataset en la forma usual a X,y
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)      #Tarea 4): Se crea crean X_train, y_train, X_test, y_test
+
 
 
 trained_tree = joblib.load('../persist/play_tennis.pkl')
@@ -32,7 +36,7 @@ conf_matrix = Confusion_matrix.confusion_matrix(y_test, predictions)            
 fpr = FPR.fpr(y_test, predictions)
 
 
-
+print("SciKitty Metrics:")
 print("Accuracy =", accuracy)                                        #Tarea 6) : Se evalúa el árbol (valida usando X_test, y_test) mostrando exactitud, precisión, recall, F1. En los casos de target binario se muestra la matriz de confusión.
 print("F1 =", f1)                                                     #Tarea 6) : Se evalúa el árbol (valida usando X_test, y_test) mostrando exactitud, precisión, recall, F1. En los casos de target binario se muestra la matriz de confusión.
 print("Recall =", recall)                                                     #Tarea 6) : Se evalúa el árbol (valida usando X_test, y_test) mostrando exactitud, precisión, recall, F1. En los casos de target binario se muestra la matriz de confusión.
@@ -41,7 +45,19 @@ print("Confusion Matrix =\n", conf_matrix)                                      
 
 print("FPR =", fpr)                                                     #Tarea 6) : Se evalúa el árbol (valida usando X_test, y_test) mostrando exactitud, precisión, recall, F1. En los casos de target binario se muestra la matriz de confusión.
 
+accuracy_sklearn = accuracy_score(y_test, predictions)
+precision_sklearn = precision_score(y_test, predictions)
+recall_sklearn = recall_score(y_test, predictions)
+f1_sklearn = f1_score(y_test, predictions)
+conf_matrix_sklearn = confusion_matrix(y_test, predictions)
 
+# Imprimir las métricas de sklearn
+print("\n\nSklearn Metrics:")
+print("Accuracy =", accuracy_sklearn)
+print("Precision =", precision_sklearn)
+print("Recall =", recall_sklearn)
+print("F1 =", f1_sklearn)
+print("Confusion Matrix =\n", conf_matrix_sklearn)
 
 dot = trained_tree.visualize_tree()                                   #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
 dot.render("../view/play_tennis_tree", format="pdf", cleanup=True)
