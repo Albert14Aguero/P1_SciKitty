@@ -6,9 +6,14 @@ import joblib
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from models.DecisionTree import DecisionTree
-from metrics import Accuracy, F1, Recall, FPR, Precision, Confusion_matrixe
+from metrics import Accuracy, F1, Recall, FPR, Precision, Confusion_matrix
 
 df = pd.read_csv("../datasets/fictional_reading_place.csv")   #Tarea 3): Se carga el dataset en la forma usual a X,y
+
+features_dictionary = {}
+for column in df.columns:
+    unique_categories = df[column].unique()
+    features_dictionary[column] = list(unique_categories)
 
 df['user_action'] = df['user_action'].replace({'skips':0, 'reads': 1})
 df['author'] = df['author'].replace({'known':0, 'unknown': 1})
@@ -20,8 +25,7 @@ X = df.drop('user_action', axis=1).drop('example', axis=1)   #Tarea 3): Se carga
 y = df['user_action']              #Tarea 3): Se carga el dataset en la forma usual a X,y
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)      #Tarea 4): Se crea crean X_train, y_train, X_test, y_test
 
-print(X_train)
-print(y_train)
+
 cls = DecisionTree(gini = False)  #Tarea 5): Se entrena con X_train (método fit) el árbol.
 
 cls.fit(X_train, y_train)    #Tarea 5): Se entrena con X_train (método fit) el árbol.    
@@ -51,6 +55,6 @@ print("FPR =", fpr)                                                     #Tarea 6
 joblib.dump(cls, '../persist/fictional_reading_place.pkl')                                 #Tarea 7): Se salva (exporta, serializa) el modelo.
 
 
-dot = cls.visualize_tree()                                   #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
+dot = cls.visualize_tree(features_dictionary=features_dictionary)                                   #Tarea 8) Se visualiza el árbol entrenado (puede ser generando un pdf).
 dot.render("../view/fictional_reading_place", format="pdf", cleanup=True)
 print("Graph generated as fictional_reading_place.pdf")
