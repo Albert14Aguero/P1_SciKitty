@@ -2,7 +2,7 @@
 
 ### SciKitty Project
 
-This repository contains the code developed by the team consisting of Rony Chinchilla Azofeifa, Andrés León Orozco, and Alberto Aguero for the SciKitty project, an academic exercise at the Universidad Nacional de Costa Rica.
+This repository contains the code developed by the team consisting of Rony Chinchilla Azofeifa, Andrés León Orozco, and Alberto Agüero Herdocia for the SciKitty project, an academic exercise at the Universidad Nacional de Costa Rica.
 
 ### Installation
 
@@ -14,6 +14,13 @@ pip install graphviz
 ```
 
 ### Usage
+
+Before running the scripts, make sure to navigate to the 'demos' folder using the following commands:
+
+```bash
+cd scikitty
+cd demos
+```
 
 Once Graphviz and the Graphviz library for Python are installed, you can test the datasets included in this project. Follow these steps:
 
@@ -40,3 +47,6 @@ python fictional_disease.py
 ```bash
 python fictional_disease_test.py
 ```
+```
+
+Con estos cambios, se proporciona una guía más clara sobre cómo navegar hasta la carpeta 'demos' antes de ejecutar los scripts.
