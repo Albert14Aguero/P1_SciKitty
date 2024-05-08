@@ -21,7 +21,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 print(X_train)
 print(y_train)
-cls = DecisionTree()  #Tarea 5): Se entrena con X_train (método fit) el árbol.
+cls = DecisionTree(gini = False)  #Tarea 5): Se entrena con X_train (método fit) el árbol.
 
 cls.fit(X_train, y_train)    #Tarea 5): Se entrena con X_train (método fit) el árbol.    
 

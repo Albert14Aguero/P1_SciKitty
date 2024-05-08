@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from graphviz import Digraph
 
 class Node:
-    def __init__(self, feature_index=None, impurity=None, impurity_type=None, samples = None, left=None, right=None, value=None, split_treshold = None):
+    def __init__(self, feature_index=None, impurity=None, impurity_type=None, samples=None, left=None, right=None, value=None, split_treshold=None, y_impurity=None):
         self.feature_index = feature_index
         self.impurity = impurity
         self.impurity_type = impurity_type
@@ -14,9 +14,11 @@ class Node:
         self.right = right
         self.value = value
         self.split_treshold = split_treshold
+        self.y_impurity = y_impurity
+
 
 class DecisionTree:
-    def __init__(self, min_samples = 1, max_depth = 3, gini = False):
+    def __init__(self, min_samples = 1, max_depth = 4, gini = False):
         self.root = None
         self.min_samples = min_samples
         self.max_depth = max_depth
@@ -30,20 +32,39 @@ class DecisionTree:
         if num_samples >= self.min_samples and depth <= self.max_depth and num_features > 0:
             
             best_split = self.best_split(X, Y)
-            
-            if best_split["impurity"] > 0:
+            if best_split["impurity_type"] == "Entropy":
+                y_impurity = self.calculate_y_entropy(best_split["value"])
+            else:
+                y_impurity = self.calculate_y_gini(best_split["value"])
+                
+            if y_impurity > 0:
                 left_node = self.build_tree(best_split["x_left"], best_split["y_left"], depth + 1)
                 right_node = self.build_tree(best_split["x_right"], best_split["y_right"], depth + 1)
                 
+                
+                
                 return Node(best_split["feature_index"], best_split["impurity"].round(3),
-                            best_split["impurity_type"], best_split["samples"], left_node, right_node, best_split["value"], best_split["split_treshold"])
+                            best_split["impurity_type"], best_split["samples"], left_node, right_node, best_split["value"], best_split["split_treshold"], y_impurity)
             else:
                 print(X[best_split["feature_index"]])
                 print(Y)
             
         print(Y.value_counts().reindex([0, 1], fill_value=0).tolist(), num_samples, depth)
         return Node(value=Y)
+
     
+    def calculate_y_entropy(self, target):
+        def log2(p):
+            return 0 if p == 0 else np.log2(p)
+        log2 = np.vectorize(log2)
+        p = self.calculate_probability(target.values)
+        return -np.sum(p*log2(p))
+    
+    def calculate_y_gini(self, target):
+        p = self.calculate_probability(target.values)
+        return 1 - np.sum(p ** 2)
+
+        
     def best_split(self, X, y):
         impurity = float('inf')
         new_impurity = 0
@@ -132,27 +153,27 @@ class DecisionTree:
             self.print_tree(node.right, "-" + indent)
             self.print_tree(node.left, "-" + indent)
     
-    def visualize_tree(self, node = None, dot=None):
+    def visualize_tree(self, node=None, dot=None):
         if not node:
             node = self.root
         if dot is None:
             dot = Digraph()
-            dot.node(name=str(id(node)), label=f"{node.feature_index}\n{node.impurity}\n{node.impurity_type}\n{node.samples}\n{node.value.value_counts().reindex([0, 1], fill_value=0).tolist()}")
+            dot.node(name=str(id(node)), label=f"{node.feature_index}\n{node.impurity_type} = {node.y_impurity}\nValues = {node.value.value_counts().reindex([0, 1], fill_value=0).tolist()}\nSamples = {node.samples}")
         
         if node.left is not None:
-            label=""
-            if(node.left.feature_index is not None):
-                label=f"{node.left.feature_index}\n{node.left.impurity}\n{node.left.impurity_type}\n{node.samples}\n"
-            label +=f"{node.left.value.value_counts().reindex([0, 1], fill_value=0).tolist()}"
+            label = ""
+            if node.left.feature_index is not None:
+                label = f"{node.left.feature_index}\n{node.impurity_type} = {node.left.y_impurity}\nSamples = {node.left.samples}\n"
+            label += f"Values = {node.left.value.value_counts().reindex([0, 1], fill_value=0).tolist()}"
             dot.node(name=str(id(node.left)), label=label)
             dot.edge(str(id(node)), str(id(node.left)), label="0")
             self.visualize_tree(node.left, dot)
         
         if node.right is not None:
-            label=""
-            if(node.right.feature_index is not None):
-                label=f"{node.right.feature_index}\n{node.right.impurity}\n{node.right.impurity_type}\n{node.samples}\n"  
-            label +=f"{node.right.value.value_counts().reindex([0, 1], fill_value=0).tolist()}"
+            label = ""
+            if node.right.feature_index is not None:
+                label = f"{node.right.feature_index}\n{node.impurity_type} = {node.right.y_impurity}\nSamples = {node.right.samples}\n"
+            label += f"Values = {node.right.value.value_counts().reindex([0, 1], fill_value=0).tolist()}"
             dot.node(name=str(id(node.right)), label=label)
             dot.edge(str(id(node)), str(id(node.right)), label="1")
             self.visualize_tree(node.right, dot)
