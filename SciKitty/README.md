@@ -18,7 +18,6 @@ pip install graphviz
 Before running the scripts, make sure to navigate to the 'demos' folder using the following commands:
 
 ```bash
-cd scikitty
 cd demos
 ```
 
