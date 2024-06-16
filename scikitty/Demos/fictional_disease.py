@@ -19,7 +19,7 @@ for column in df.columns:
 features_dictionary['Age'] = ['Younger', 'Older']
 
 meanAge = df['Age'].mean() #Obtenemos el priomedio de la edad
-binary_values = (df['Age'] <= meanAge) #Obtenemos un arreglo de booleanos que nos dice si la edad es menor o igual al promedio
+binary_values = (df['Age'] >= meanAge) #Obtenemos un arreglo de booleanos que nos dice si la edad es menor o igual al promedio
 df['Age'] = binary_values  #Reemplazamos la columna de edad por el arreglo de booleanos
 df['Age'] = df['Age'].replace({False:0, True: 1}) #Reemplazamos el arreglo de booleanos por 0 y 1
 df['Gender'] = df['Gender'].replace({'Male':0, 'Female': 1})
@@ -36,6 +36,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 cls = DecisionTree(gini = False)  #Tarea 5): Se entrena con X_train (método fit) el árbol.
 
 cls.fit(X_train, y_train)    #Tarea 5): Se entrena con X_train (método fit) el árbol.    
+
+print("JSON tree: " + cls.to_json("Disease", ["not_diseased", "diseased"]))
+
+cls.export_to_prolog("http://localhost:8000/compile", "Disease", ["not_diseased", "diseased"])
+
+cls.prediction_by_prolog("http://localhost:8000/predict", {'Age': 15, 'Gender': 1, 'SmokerHistory': 0})
 
 predictions =  cls.predict(X_test)  #Tarea 6) : Se evalúa el árbol (valida usando X_test, y_test) mostrando exactitud, precisión, recall, F1. En los casos de target binario se muestra la matriz de confusión.
 

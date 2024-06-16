@@ -3,6 +3,8 @@ import pandas as pd
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 import matplotlib.pyplot as plt
 from graphviz import Digraph
+import json
+import requests
 
 class Node:
     def __init__(self, feature_index=None, impurity=None, impurity_type=None, samples=None, left=None, right=None, value=None, split_treshold=None, y_impurity=None):
@@ -187,7 +189,7 @@ class DecisionTree:
         return X.apply(self.idividual_predict,  axis=1).values
         return
     
-    def idividual_predict(self, x, node=None):
+    def idividual_predict(self, x, node=None): 
         if node is None:
                 node = self.root
 
@@ -196,5 +198,55 @@ class DecisionTree:
         if x[node.feature_index] <= node.split_treshold:
             return self.idividual_predict(x, node.left)
         return self.idividual_predict(x, node.right)
+    
+    def to_dict(self, node=None):  # Añadido y_feature_name como parámetro
+        if node is None:
+            node = self.root
+
+        node_dict = {
+            'feature_index': node.feature_index,
+            'impurity': node.impurity,
+            'impurity_type': node.impurity_type,
+            'samples': node.samples,
+            'value': node.value.value_counts().reindex([0, 1], fill_value=0).tolist(),
+            'split_treshold': node.split_treshold,
+            'y_impurity': node.y_impurity,
+        }
+        if node.left is not None:
+            node_dict['left'] = self.to_dict(node.left)
+        if node.right is not None:
+            node_dict['right'] = self.to_dict(node.right)
         
+        return node_dict
+
+    def to_json(self, y_feature_name, y_feature_values=None):
+        tree_dict = self.to_dict()
+        result = {
+            'tree': tree_dict,
+            'y_feature': {
+                'name': y_feature_name,
+                'values': y_feature_values
+            }
+        }
+        return json.dumps(result)
+    
+    def export_to_prolog(self, url, y_feature_name, y_feature_values=None):
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(url, data=self.to_json(y_feature_name, y_feature_values), headers=headers)
+        
+        if response.status_code == 200:
+            print("Successfully sent the JSON to the specified URL.")
+        else:
+            print(f"Failed to send JSON. Status code: {response.status_code}, Response: {response.text}")
+
+    def prediction_by_prolog(self, url, x_predict):
+        print(json.dumps(x_predict))
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(url, data=json.dumps(x_predict), headers=headers)
+        
+        if response.status_code == 200:
+            print(response.json())
+            return response.json()
+        else:
+            print(f"Failed to send JSON. Status code: {response.status_code}, Response: {response.text}")
 #feature_index=None, impurity=None, impurity_type=None, left=None, right=None, value=None

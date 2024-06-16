@@ -28,9 +28,13 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 cls = DecisionTree(gini = False)  #Tarea 5): Se entrena con X_train (método fit) el árbol.
 
-cls.fit(X_train, y_train)    #Tarea 5): Se entrena con X_train (método fit) el árbol.    
+cls.fit(X_train, y_train)    #Tarea 5): Se entrena con X_train (método fit) el árbol.  
 
+print(cls.to_json("Play Tennis", ["no", "yes"]))
 
+cls.export_to_prolog("http://localhost:8000/compile", "Play Tennis", ["no", "yes"])
+
+cls.prediction_by_prolog("http://localhost:8000/predict", {'Outlook_Overcast': 0, 'Humidity': 1, 'Wind': 0, 'Outlook_Rain': 1, 'Outlook_Sunny': 0, 'Temperature_Hot' : 1, 'Temperature_Cool' : 0, 'Temperature_Mild' : 0})
 #cls.print_tree()
 
 predictions =  cls.predict(X_test)  #Tarea 6) : Se evalúa el árbol (valida usando X_test, y_test) mostrando exactitud, precisión, recall, F1. En los casos de target binario se muestra la matriz de confusión.

@@ -16,7 +16,7 @@ for column in df.columns:
     features_dictionary[column] = list(unique_categories)
 
 df['user_action'] = df['user_action'].replace({'skips':0, 'reads': 1})
-df['author'] = df['author'].replace({'known':0, 'unknown': 1})
+df['author'] = df['author'].replace({'unknown':0, 'known': 1})
 df['thread'] = df['thread'].replace({'new':0, 'follow_up': 1})
 df['length'] = df['length'].replace({'long':0, 'short': 1}) 
 df['where_read'] = df['where_read'].replace({'home':0, 'work': 1}) 
@@ -30,7 +30,14 @@ cls = DecisionTree(gini = True)  #Tarea 5): Se entrena con X_train (método fit)
 
 cls.fit(X_train, y_train)    #Tarea 5): Se entrena con X_train (método fit) el árbol.    
 
+print(cls.to_json("user_action", ["skips", "reads"]))
+
+cls.export_to_prolog("http://localhost:8000/compile", "user_action", ["skips", "reads"])
+
+cls.prediction_by_prolog("http://localhost:8000/predict", {'author': 0, 'thread': 1, 'length': 0, 'where_read': 1})
+
 cls.print_tree()
+
 
 predictions =  cls.predict(X_test)  
 
