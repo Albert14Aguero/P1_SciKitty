@@ -13,6 +13,13 @@ conda install python-graphviz
 pip install graphviz
 ```
 
+### Run Prolog Server
+```bash
+cd .\scikitty\
+cd .\prolog\ 
+swipl .\PrologServer.pl
+```
+
 ### Usage
 
 Before running the scripts, make sure to navigate to the 'demos' folder using the following commands:
