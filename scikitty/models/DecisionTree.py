@@ -47,11 +47,10 @@ class DecisionTree:
                 
                 return Node(best_split["feature_index"], best_split["impurity"].round(3),
                             best_split["impurity_type"], best_split["samples"], left_node, right_node, best_split["value"], best_split["split_treshold"], y_impurity)
-            else:
-                print(X[best_split["feature_index"]])
-                print(Y)
             
-        print(Y.value_counts().reindex([0, 1], fill_value=0).tolist(), num_samples, depth)
+                
+            
+       
         return Node(value=Y)
 
     
@@ -78,7 +77,7 @@ class DecisionTree:
             if new_impurity < impurity:
                 impurity = new_impurity
                 best_x = x
-        print("Mejor: ", best_x)
+       
         best_split["feature_index"] = best_x.name
         best_split["impurity"] = impurity
         best_split["impurity_type"] = "Gini" if self.gini else "Entropy"
@@ -98,15 +97,14 @@ class DecisionTree:
         return num_features / total
     
     def calculate_conditional_probabilities(self, target, feature):
-        total_elementos = len(target)
+        total_elements = len(target)
         unique_target = np.unique(target)
         unique_feature, counts_feature = np.unique(feature, return_counts=True)
 
-        # Verificar si solo hay un tipo de número en feature
-        if np.all(counts_feature == total_elementos) or len(unique_target) == 1:
+        if np.all(counts_feature == total_elements) or len(unique_target) == 1:
             # Si solo hay un tipo de número, las probabilidades condicionales son uniformes
-            probabilidades_condicionales = np.ones((len(unique_feature), len(unique_target))) / len(unique_target)
-            return probabilidades_condicionales
+            conditional_probabilities = np.ones((len(unique_feature), len(unique_target))) / len(unique_target)
+            return conditional_probabilities
 
         # Crear una matriz de índices para indexar target según los valores de feature
         indices = np.argsort(feature)
@@ -114,22 +112,26 @@ class DecisionTree:
         target_sorted = target[indices]
 
         # Usar np.add.reduceat para calcular los conteos condicionales
-        counts_condicionales = np.add.reduceat(np.eye(len(unique_target))[target_sorted], np.searchsorted(feature_sorted, unique_feature))
+        counts_conditional = np.add.reduceat(np.eye(len(unique_target), dtype=int)[target_sorted.astype(int)], np.searchsorted(feature_sorted, unique_feature))
 
         # Normalizar los conteos para obtener probabilidades condicionales
-        probabilidades_condicionales = counts_condicionales / counts_feature[:, np.newaxis]
+        conditional_probabilities = counts_conditional / counts_feature[:, np.newaxis]
 
-        return probabilidades_condicionales
+        return conditional_probabilities
+
+
     
     def calculate_impurity(self, target, feature):
-        probabilidades_a = self.calculate_probability(feature.values)
-        probabilidades_b = self.calculate_conditional_probabilities(target.values, feature.values)
-        resultado = 0
-        impureza = self.calculate_gini if self.gini else self.calculate_entropy
+        probabilities_a = self.calculate_probability(feature.values)
+        probabilities_b = self.calculate_conditional_probabilities(target.values, feature.values)
+        result = 0
+        impurity_func = self.calculate_gini if self.gini else self.calculate_entropy
         
-        for i in range(len(probabilidades_a)):
-            resultado += probabilidades_a[i] * impureza(probabilidades_b[i][probabilidades_b[i]!=0])
-        return resultado
+        for i in range(len(probabilities_a)):
+            non_zero_indices = probabilities_b[i] != 0
+            result += probabilities_a[i] * impurity_func(probabilities_b[i][non_zero_indices])
+        return result
+
     
     
 
